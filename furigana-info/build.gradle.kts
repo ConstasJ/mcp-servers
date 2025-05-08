@@ -10,6 +10,7 @@ dependencies {
     implementation(libs.bundles.mcp)
     implementation(libs.jsoup)
     ksp(libs.mcp.ksp)
+    testImplementation(libs.kotlin.test)
 }
 
 application {

@@ -9,4 +9,7 @@ allprojects {
             }
         }
     }
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor(0, TimeUnit.MINUTES)
+    }
 }
