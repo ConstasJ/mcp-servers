@@ -9,16 +9,16 @@ import io.modelcontextprotocol.kotlin.sdk.TextContent
 import io.modelcontextprotocol.kotlin.sdk.client.Client
 import io.modelcontextprotocol.kotlin.sdk.client.ClientOptions
 import io.modelcontextprotocol.kotlin.sdk.client.SseClientTransport
+import io.modelcontextprotocol.kotlin.sdk.server.StdioServerTransport
 import kotlinx.coroutines.*
+import kotlinx.io.asSink
+import kotlinx.io.asSource
+import kotlinx.io.buffered
 import kotlinx.serialization.json.Json
 import kotlin.test.*
 
 class FuriganaTest {
-    private val server = getServer()
-
-    private val httpClient = HttpClient(CIO) {
-        install(SSE)
-    }
+    private val server = getMcpServer()
 
     private val mcpClient = Client(
         clientInfo = Implementation("FuriganaTest Client", "0.0.1"), options = ClientOptions(
@@ -27,15 +27,8 @@ class FuriganaTest {
     )
 
     @BeforeTest
-    fun init() {
-        server.start(wait = false)
-        runBlocking {
-            mcpClient.connect(
-                SseClientTransport(
-                    client = httpClient, urlString = "http://localhost:8080"
-                )
-            )
-        }
+    fun init() = runBlocking {
+
     }
 
     @Test

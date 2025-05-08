@@ -5,7 +5,8 @@ plugins {
 }
 
 val projects = listOf(
-    "furigana-info"
+    "furigana-info",
+    "test-utils"
 )
 
 include(projects)
