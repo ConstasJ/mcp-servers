@@ -32,6 +32,9 @@ fun Application.module() {
                     tools = ServerCapabilities.Tools(listChanged = true)
                 )
             )
-        )
+        ).apply {
+            val component = FuriganaComponent()
+            addTools(component.tools())
+        }
     }
 }
