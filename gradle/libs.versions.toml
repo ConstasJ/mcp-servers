@@ -4,6 +4,8 @@
 kotlin = "2.1.20"
 ktor = "3.1.3"
 logback = "1.4.14"
+mcp = "0.5.0"
+ksp = "2.1.20-1.0.32"
 
 [libraries]
 ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -11,9 +13,15 @@ ktor-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor"}
 ktor-sse = { module = "io.ktor:ktor-server-sse", version.ref = "ktor"}
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback"}
 
+mcp-sdk = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcp" }
+mcp-utils = { module = "io.github.stream29:mcp-utils", version = "1.0-SNAPSHOT" }
+mcp-ksp = { module = "io.github.stream29:mcp-ksp", version = "1.0-SNAPSHOT" }
+
 [bundles]
 ktor = ["ktor-core", "ktor-cio", "ktor-sse", "logback"]
+mcp = ["mcp-sdk", "mcp-utils"]
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

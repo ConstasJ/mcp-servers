@@ -9,9 +9,3 @@ val projects = listOf(
 )
 
 include(projects)
-
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-    }
-}
