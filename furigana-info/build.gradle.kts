@@ -5,7 +5,8 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.bundles.ktor)
+    implementation(libs.bundles.ktor.server)
+    implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.mcp)
     ksp(libs.mcp.ksp)
 }
