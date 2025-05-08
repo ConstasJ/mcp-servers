@@ -1,26 +1,24 @@
 package io.github.constasj.mcp.furigana
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.sse.*
+import io.github.constasj.mcp.utils.MockTransport
 import io.modelcontextprotocol.kotlin.sdk.ClientCapabilities
 import io.modelcontextprotocol.kotlin.sdk.Implementation
+import io.modelcontextprotocol.kotlin.sdk.JSONRPCMessage
 import io.modelcontextprotocol.kotlin.sdk.TextContent
 import io.modelcontextprotocol.kotlin.sdk.client.Client
 import io.modelcontextprotocol.kotlin.sdk.client.ClientOptions
-import io.modelcontextprotocol.kotlin.sdk.client.SseClientTransport
-import io.modelcontextprotocol.kotlin.sdk.server.StdioServerTransport
 import kotlinx.coroutines.*
-import kotlinx.io.asSink
-import kotlinx.io.asSource
-import kotlinx.io.buffered
+import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.json.Json
 import kotlin.test.*
 
 class FuriganaTest {
     private val server = getMcpServer()
 
-    private val mcpClient = Client(
+    private val fromServerToClient = Channel<JSONRPCMessage>()
+    private val fromClientToServer = Channel<JSONRPCMessage>()
+
+    private val client = Client(
         clientInfo = Implementation("FuriganaTest Client", "0.0.1"), options = ClientOptions(
             capabilities = ClientCapabilities()
         )
@@ -28,14 +26,15 @@ class FuriganaTest {
 
     @BeforeTest
     fun init() = runBlocking {
-
+        server.connect(MockTransport(fromClientToServer, fromServerToClient))
+        client.connect(MockTransport(fromServerToClient, fromClientToServer))
     }
 
     @Test
     fun testGetFurigana() = runBlocking {
-        assertTrue { mcpClient.listTools()!!.tools.asSequence().map { it.name }.contains("getFurigana") }
+        assertTrue { client.listTools()!!.tools.asSequence().map { it.name }.contains("getFurigana") }
         val response =
-            mcpClient.callTool("getFurigana", mapOf("value" to "道"))!!.content.first().let { it as TextContent }.text!!
+            client.callTool("getFurigana", mapOf("value" to "道"))!!.content.first().let { it as TextContent }.text!!
                 .let { Json.decodeFromString<List<String>>(it) }
         assertContentEquals(
             listOf(
@@ -60,10 +59,8 @@ class FuriganaTest {
     }
 
     @AfterTest
-    fun teardown() {
-        server.stop(1_000, 5_000)
-        runBlocking {
-            mcpClient.close()
-        }
+    fun teardown() = runBlocking {
+        server.close()
+        client.close()
     }
 }
